@@ -1,4 +1,4 @@
-package com.taeyeon.screenboard.ui.theme
+package com.taeyeon.screenboard.theme
 
 import androidx.compose.ui.graphics.Color
 
