@@ -32,7 +32,7 @@ fun GradientBox(
         layer2Color1 = MaterialTheme.colorScheme.secondary
     ),
     contentAlignment: Alignment = Alignment.TopStart,
-    propagateMinConstraints: Boolean = true,
+    propagateMinConstraints: Boolean = false,
     content: @Composable (BoxScope.() -> Unit) = {}
 ) {
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
@@ -50,7 +50,6 @@ fun GradientBox(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
             .onSizeChanged { intSize -> boxSize = intSize }
             .background(gradientBoxColor.backgroundColor)
             .background(
