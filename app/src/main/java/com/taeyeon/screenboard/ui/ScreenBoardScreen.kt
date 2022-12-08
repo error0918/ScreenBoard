@@ -70,7 +70,7 @@ fun Controller(
                 IconButton(
                     onClick = { isHidden = false },
                     modifier = Modifier
-                        .align(Alignment.Center)
+                        .align(Alignment.CenterEnd)
                         .background(
                             color = Color.Black.copy(alpha = 0.3f),
                             shape = CircleShape
