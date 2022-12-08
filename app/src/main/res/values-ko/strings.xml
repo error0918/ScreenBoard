@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">스크린 보드</string>
+
+    <string name="floatingbutton_move_left">왼쪽으로</string>
+    <string name="floatingbutton_move_right">오른쪽으로</string>
+
+    <string name="floatingbutton_morevert">더보기</string>
+    <string name="floatingbutton_hide">숨기기</string>
+    <string name="floatingbutton_touch_protection">터치 방지</string>
+    <string name="floatingbutton_poweroff">전원 끄기</string>
+    <string name="floatingbutton_close">닫기</string>
 </resources>

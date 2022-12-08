@@ -1,23 +1,29 @@
+@file:OptIn(ExperimentalAnimationApi::class)
+@file:Suppress("OPT_IN_IS_NOT_ENABLED")
+
 package com.taeyeon.screenboard.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.taeyeon.screenboard.R
 import com.taeyeon.screenboard.model.MainViewModel
-import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.system.exitProcess
+
 
 @Composable
 fun ScreenBoardScreen() {
@@ -33,91 +39,138 @@ fun ScreenBoardScreen() {
             layer2Color2 = Color(0xffffc0cb)
         )
     ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .background(
-                    color = Color.Black.copy(alpha = 0.3f),
-                    shape = CircleShape
-                )
-                .padding(horizontal = 8.dp)
-        ) {
-            CompositionLocalProvider(LocalContentColor provides Color.White) {
-                IconButton(
-                    onClick = { /* TODO */ }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ChevronLeft,
-                        contentDescription = "adsf",
-                        tint = Color.White
-                    )
-                }
-                IconButton(
-                    onClick = { /* TODO */ }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ChevronRight,
-                        contentDescription = "adsf"
-                    )
-                }
-            }
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .background(
-                    color = Color.Black.copy(alpha = 0.3f),
-                    shape = CircleShape
-                )
-                .padding(horizontal = 8.dp)
-        ) {
-            CompositionLocalProvider(LocalContentColor provides Color.White) {
-                IconButton(
-                    onClick = { /* TODO */ }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.MoreVert,
-                        contentDescription = "adsf",
-                        tint = Color.White
-                    )
-                }
-                IconButton(
-                    onClick = { /* TODO */ }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.DoNotTouch,
-                        contentDescription = "adsf"
-                    )
-                }
-                IconButton(
-                    onClick = { /* TODO */ }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.PowerOff,
-                        contentDescription = "adsf"
-                    )
-                }
-                IconButton(
-                    onClick = { exitProcess(0) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Close,
-                        contentDescription = "adsf"
-                    )
-                }
-            }
-        }
+        Controller()
 
         val viewModel = remember { MainViewModel() }
-        val calendar by viewModel.time.observeAsState(Calendar.getInstance())
+        val calendar by viewModel.time  .observeAsState(Calendar.getInstance())
         TextClock(
             calendar = calendar,
             modifier = Modifier.align(Alignment.Center)
         )
 
+    }
+}
+
+
+@Composable
+fun Controller(
+    modifier: Modifier = Modifier
+) {
+    var isHidden by rememberSaveable { mutableStateOf(false) }
+    AnimatedContent(
+        targetState = isHidden,
+        //transitionSpec = ,
+        modifier = modifier
+    ) {
+        if (it) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                IconButton(
+                    onClick = { isHidden = false },
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .background(
+                            color = Color.Black.copy(alpha = 0.3f),
+                            shape = CircleShape
+                        )
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.ArrowDropDown,
+                        contentDescription = stringResource(id = R.string.floatingbutton_move_left),
+                        tint = Color.White
+                    )
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .background(
+                            color = Color.Black.copy(alpha = 0.3f),
+                            shape = CircleShape
+                        )
+                        .padding(horizontal = 4.dp)
+                ) {
+                    CompositionLocalProvider(LocalContentColor provides Color.White) {
+                        IconButton(
+                            onClick = { /* TODO */ }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.ChevronLeft,
+                                contentDescription = stringResource(id = R.string.floatingbutton_move_left)
+                            )
+                        }
+                        IconButton(
+                            onClick = { /* TODO */ }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.ChevronRight,
+                                contentDescription = stringResource(id = R.string.floatingbutton_move_right)
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .background(
+                            color = Color.Black.copy(alpha = 0.3f),
+                            shape = CircleShape
+                        )
+                        .padding(horizontal = 4.dp)
+                ) {
+                    CompositionLocalProvider(LocalContentColor provides Color.White) {
+                        IconButton(
+                            onClick = { /* TODO */ }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.MoreVert,
+                                contentDescription = stringResource(id = R.string.floatingbutton_morevert)
+                            )
+                        }
+                        IconButton(
+                            onClick = { isHidden = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.KeyboardArrowUp,
+                                contentDescription = stringResource(id = R.string.floatingbutton_hide)
+                            )
+                        }
+                        IconButton(
+                            onClick = { /* TODO */ }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.DoNotTouch,
+                                contentDescription = stringResource(id = R.string.floatingbutton_touch_protection)
+                            )
+                        }
+                        IconButton(
+                            onClick = { /* TODO */ }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.PowerOff,
+                                contentDescription = stringResource(id = R.string.floatingbutton_poweroff)
+                            )
+                        }
+                        IconButton(
+                            onClick = { exitProcess(0) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = stringResource(id = R.string.floatingbutton_close)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
