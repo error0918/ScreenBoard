@@ -10,4 +10,7 @@
     <string name="floatingbutton_touch_protection">Touch Protection</string>
     <string name="floatingbutton_poweroff">Power Off</string>
     <string name="floatingbutton_close">Close</string>
+
+    <string name="clear_touch_protection_arrow">Clear Touch Protection Arrow</string>
+    <string name="clear_touch_protection">Clear Touch Protection</string>
 </resources>

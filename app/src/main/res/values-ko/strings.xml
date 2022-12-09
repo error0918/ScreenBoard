@@ -10,4 +10,7 @@
     <string name="floatingbutton_touch_protection">터치 방지</string>
     <string name="floatingbutton_poweroff">전원 끄기</string>
     <string name="floatingbutton_close">닫기</string>
+
+    <string name="clear_touch_protection_arrow">터치 방지 해제 화살표</string>
+    <string name="clear_touch_protection">터치 방지 해제</string>
 </resources>
