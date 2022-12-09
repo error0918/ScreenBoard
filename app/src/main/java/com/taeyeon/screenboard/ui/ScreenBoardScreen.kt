@@ -20,18 +20,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
@@ -80,7 +79,14 @@ fun ScreenBoardScreen() {
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .width(240.dp)
+                .width(
+                    240.dp
+                            + with (LocalDensity.current) {
+                                if (swipeableState.offset.value < -0) -swipeableState.offset.value.toDp() * 2
+                                else if (swipeableState.offset.value.toDp() + 48.dp > 240.dp) (swipeableState.offset.value.toDp() + 48.dp - 240.dp) * 2
+                                else 0.dp
+                            }
+                )
                 .height(48.dp)
                 .background(
                     color = Color.Black.copy(alpha = 0.3f),
@@ -109,17 +115,19 @@ fun ScreenBoardScreen() {
                     .fillMaxSize()
                     .padding(
                         vertical = 12.dp,
-                        horizontal = 24.dp
+                        horizontal = 12.dp
                     ),
                 contentDescription = stringResource(id = R.string.clear_touch_protection_arrow)
             ) {
+                val dp12 = 12.dp.toPx()
+                val padding = (size.width - 7 * dp12) / 8
 
                 for (i in 0..6) {
                     drawPath(
                         path = Path().apply {
-                            moveTo(30.dp.toPx() * i, 0f)
-                            lineTo(30.dp.toPx() * i + 12.dp.toPx(), size.height / 2)
-                            lineTo(30.dp.toPx() * i, size.height)
+                            moveTo((dp12 + padding) * i + padding, 0f)
+                            lineTo((dp12 + padding) * i + padding + dp12, size.height / 2)
+                            lineTo((dp12 + padding) * i + padding, size.height)
                         },
                         color = Color.White,
                         alpha = 0.5f,
@@ -133,6 +141,13 @@ fun ScreenBoardScreen() {
                 contentDescription = stringResource(id = R.string.clear_touch_protection),
                 tint = Color.White,
                 modifier = Modifier
+                    .padding(
+                        horizontal = with (LocalDensity.current) {
+                            if (swipeableState.offset.value < -0) -swipeableState.offset.value.toDp()
+                            else if (swipeableState.offset.value.toDp() + 48.dp > 240.dp) swipeableState.offset.value.toDp() + 48.dp - 240.dp
+                            else 0.dp
+                        }
+                    )
                     .size(48.dp)
                     .align(Alignment.CenterStart)
                     .offset(with(LocalDensity.current) { swipeableState.offset.value.toDp() })
