@@ -1,5 +1,6 @@
-@file:OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class,
-    ExperimentalFoundationApi::class
+@file:OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalMaterialApi::class, ExperimentalFoundationApi::class
 )
 @file:Suppress("OPT_IN_IS_NOT_ENABLED")
 
@@ -20,12 +21,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +41,8 @@ import java.util.*
 import kotlin.system.exitProcess
 
 
+val viewModel by lazy { MainViewModel() }
+
 @Composable
 fun ScreenBoardScreen() {
     GradientBox(
@@ -57,107 +57,13 @@ fun ScreenBoardScreen() {
             layer2Color2 = Color(0xffffc0cb)
         )
     ) {
-        //Controller()
+        Controller()
 
-        val viewModel = remember { MainViewModel() }
         val calendar by viewModel.time  .observeAsState(Calendar.getInstance())
         TextClock(
             calendar = calendar,
             modifier = Modifier.align(Alignment.Center)
         )
-
-        val hapticFeedback = LocalHapticFeedback.current
-
-        val swipeableState = rememberSwipeableState(
-            initialValue = 0,
-            confirmStateChange = { value ->
-                hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                true
-            }
-        )
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .width(
-                    240.dp
-                            + with (LocalDensity.current) {
-                                if (swipeableState.offset.value < -0) -swipeableState.offset.value.toDp() * 2
-                                else if (swipeableState.offset.value.toDp() + 48.dp > 240.dp) (swipeableState.offset.value.toDp() + 48.dp - 240.dp) * 2
-                                else 0.dp
-                            }
-                )
-                .height(48.dp)
-                .background(
-                    color = Color.Black.copy(alpha = 0.3f),
-                    shape = CircleShape
-                )
-                .border(
-                    width = 1.dp,
-                    color = Color.Black,
-                    shape = CircleShape
-                )
-                .swipeable(
-                    state = swipeableState,
-                    anchors = with(LocalDensity.current) {
-                        mapOf(
-                            0f to 0,
-                            240.dp.toPx() - 48.dp.toPx() to 1
-                        )
-                    },
-                    orientation = Orientation.Horizontal,
-                    thresholds = { _, _ -> FractionalThreshold(1f) },
-                    velocityThreshold = 100.dp
-                )
-        ) {
-            Canvas(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        vertical = 12.dp,
-                        horizontal = 12.dp
-                    ),
-                contentDescription = stringResource(id = R.string.clear_touch_protection_arrow)
-            ) {
-                val dp12 = 12.dp.toPx()
-                val padding = (size.width - 7 * dp12) / 8
-
-                for (i in 0..6) {
-                    drawPath(
-                        path = Path().apply {
-                            moveTo((dp12 + padding) * i + padding, 0f)
-                            lineTo((dp12 + padding) * i + padding + dp12, size.height / 2)
-                            lineTo((dp12 + padding) * i + padding, size.height)
-                        },
-                        color = Color.White,
-                        alpha = 0.5f,
-                        style = Stroke(6.dp.toPx(), cap = StrokeCap.Round)
-                    )
-                }
-
-            }
-            Icon(
-                imageVector = Icons.Rounded.DoNotTouch,
-                contentDescription = stringResource(id = R.string.clear_touch_protection),
-                tint = Color.White,
-                modifier = Modifier
-                    .padding(
-                        horizontal = with (LocalDensity.current) {
-                            if (swipeableState.offset.value < -0) -swipeableState.offset.value.toDp()
-                            else if (swipeableState.offset.value.toDp() + 48.dp > 240.dp) swipeableState.offset.value.toDp() + 48.dp - 240.dp
-                            else 0.dp
-                        }
-                    )
-                    .size(48.dp)
-                    .align(Alignment.CenterStart)
-                    .offset(with(LocalDensity.current) { swipeableState.offset.value.toDp() })
-                    .background(
-                        color = Color.Black.copy(alpha = 0.3f),
-                        shape = CircleShape
-                    )
-                    .padding(12.dp)
-            )
-        }
 
     }
 }
@@ -167,34 +73,13 @@ fun ScreenBoardScreen() {
 fun Controller(
     modifier: Modifier = Modifier
 ) {
-    var isHidden by rememberSaveable { mutableStateOf(false) }
     AnimatedContent(
-        targetState = isHidden,
+        targetState = viewModel.isTouchProtection.observeAsState(initial = false).value,
         //transitionSpec = ,
         modifier = modifier
     ) {
-        if (it) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                IconButton(
-                    onClick = { isHidden = false },
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .background(
-                            color = Color.Black.copy(alpha = 0.3f),
-                            shape = CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowDropDown,
-                        contentDescription = stringResource(id = R.string.floatingbutton_move_left),
-                        tint = Color.White
-                    )
-                }
-            }
-        } else {
+        val hapticFeedback = LocalHapticFeedback.current
+        if (!it) {
             Box(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -248,15 +133,7 @@ fun Controller(
                             )
                         }
                         IconButton(
-                            onClick = { isHidden = true }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.KeyboardArrowUp,
-                                contentDescription = stringResource(id = R.string.floatingbutton_hide)
-                            )
-                        }
-                        IconButton(
-                            onClick = { /* TODO */ }
+                            onClick = { viewModel.changeIsTouchProtection() }
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.DoNotTouch,
@@ -280,6 +157,101 @@ fun Controller(
                             )
                         }
                     }
+                }
+            }
+        } else {
+            val swipeableState = rememberSwipeableState(
+                initialValue = 0,
+                confirmStateChange = { value ->
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    true
+                }
+            )
+
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .width(
+                            240.dp
+                                    + with(LocalDensity.current) {
+                                if (swipeableState.offset.value < -0) -swipeableState.offset.value.toDp() * 2
+                                else if (swipeableState.offset.value.toDp() + 48.dp > 240.dp) (swipeableState.offset.value.toDp() + 48.dp - 240.dp) * 2
+                                else 0.dp
+                            }
+                        )
+                        .height(48.dp)
+                        .background(
+                            color = Color.Black.copy(alpha = 0.3f),
+                            shape = CircleShape
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = Color.Black,
+                            shape = CircleShape
+                        )
+                        .swipeable(
+                            state = swipeableState,
+                            anchors = with(LocalDensity.current) {
+                                mapOf(
+                                    0f to 0,
+                                    240.dp.toPx() - 48.dp.toPx() to 1
+                                )
+                            },
+                            orientation = Orientation.Horizontal,
+                            thresholds = { _, _ -> FractionalThreshold(1f) },
+                            velocityThreshold = 100.dp
+                        )
+                ) {
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                vertical = 12.dp,
+                                horizontal = 12.dp
+                            ),
+                        contentDescription = stringResource(id = R.string.clear_touch_protection_arrow)
+                    ) {
+                        val dp12 = 12.dp.toPx()
+                        val padding = (size.width - 7 * dp12) / 8
+
+                        for (i in 0..6) {
+                            drawPath(
+                                path = Path().apply {
+                                    moveTo((dp12 + padding) * i + padding, 0f)
+                                    lineTo((dp12 + padding) * i + padding + dp12, size.height / 2)
+                                    lineTo((dp12 + padding) * i + padding, size.height)
+                                },
+                                color = Color.White,
+                                alpha = 0.5f,
+                                style = Stroke(6.dp.toPx(), cap = StrokeCap.Round)
+                            )
+                        }
+
+                    }
+                    Icon(
+                        imageVector = Icons.Rounded.DoNotTouch,
+                        contentDescription = stringResource(id = R.string.clear_touch_protection),
+                        tint = Color.White,
+                        modifier = Modifier
+                            .padding(
+                                horizontal = with (LocalDensity.current) {
+                                    if (swipeableState.offset.value < -0) -swipeableState.offset.value.toDp()
+                                    else if (swipeableState.offset.value.toDp() + 48.dp > 240.dp) swipeableState.offset.value.toDp() + 48.dp - 240.dp
+                                    else 0.dp
+                                }
+                            )
+                            .size(48.dp)
+                            .align(Alignment.CenterStart)
+                            .offset(with(LocalDensity.current) { swipeableState.offset.value.toDp() })
+                            .background(
+                                color = Color.Black.copy(alpha = 0.3f),
+                                shape = CircleShape
+                            )
+                            .padding(12.dp)
+                    )
                 }
             }
         }

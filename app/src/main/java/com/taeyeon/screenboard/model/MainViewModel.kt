@@ -11,7 +11,10 @@ import java.util.*
 
 class MainViewModel: ViewModel() {
     private var _time = MutableLiveData(Calendar.getInstance())
+    private var _isTouchProtection = MutableLiveData(false)
+
     val time: LiveData<Calendar> get() = _time
+    val isTouchProtection: LiveData<Boolean> get() = _isTouchProtection
 
     init {
         CoroutineScope(Dispatchers.Main).launch {
@@ -20,5 +23,9 @@ class MainViewModel: ViewModel() {
                 _time.value = Calendar.getInstance()
             }
         }
+    }
+
+    fun changeIsTouchProtection() {
+        _isTouchProtection.value = !_isTouchProtection.value!!
     }
 }
