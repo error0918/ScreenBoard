@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Screen Board</string>
 
+
     <string name="floatingbutton_move_left">Move Left</string>
     <string name="floatingbutton_move_right">Move Right</string>
 
@@ -11,4 +12,7 @@
 
     <string name="clear_touch_protection_arrow">Clear Touch Protection Arrow</string>
     <string name="clear_touch_protection">Clear Touch Protection</string>
+
+
+    <string name="imformationbar_battery_info_image">Battery Info</string>
 </resources>

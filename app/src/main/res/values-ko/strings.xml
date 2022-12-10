@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">스크린 보드</string>
 
+
     <string name="floatingbutton_move_left">왼쪽으로</string>
     <string name="floatingbutton_move_right">오른쪽으로</string>
 
@@ -12,4 +13,7 @@
 
     <string name="clear_touch_protection_arrow">터치 방지 해제 화살표</string>
     <string name="clear_touch_protection">터치 방지 해제</string>
+
+
+    <string name="imformationbar_battery_info_image">배터리 정보</string>
 </resources>

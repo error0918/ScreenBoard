@@ -6,6 +6,10 @@
 
 package com.taeyeon.screenboard.ui
 
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
+import android.os.Build
 import androidx.compose.animation.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -29,11 +33,11 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.content.getSystemService
 import com.taeyeon.screenboard.R
 import com.taeyeon.screenboard.model.MainViewModel
 import java.util.*
@@ -56,13 +60,20 @@ fun ScreenBoardScreen() {
             layer2Color2 = Color(0xffffc0cb)
         )
     ) {
-        Controller()
+        Controller(
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
 
         val calendar by viewModel.time.observeAsState(Calendar.getInstance())
         TextClock(
             calendar = calendar,
             modifier = Modifier.align(Alignment.Center)
         )
+
+        InformationBar(
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+
     }
 }
 
@@ -148,7 +159,7 @@ fun Controller(
                         tint = Color.White,
                         modifier = Modifier
                             .padding(
-                                horizontal = with (LocalDensity.current) {
+                                horizontal = with(LocalDensity.current) {
                                     if (swipeableState.offset.value < -0) -swipeableState.offset.value.toDp()
                                     else if (swipeableState.offset.value.toDp() + 48.dp > 240.dp) swipeableState.offset.value.toDp() + 48.dp - 240.dp
                                     else 0.dp
@@ -275,6 +286,56 @@ fun Controller(
                     }
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+fun InformationBar(
+    modifier: Modifier = Modifier
+) {
+    val batteryManager = LocalContext.current.getSystemService<BatteryManager>()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        batteryManager?.let {
+            val batteryPercent = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+            val isCharging = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { intentFilter ->
+                LocalContext.current.registerReceiver(null, intentFilter)
+            }?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) == BatteryManager.BATTERY_STATUS_CHARGING
+
+            Icon(
+                imageVector =
+                if (isCharging) Icons.Rounded.BatteryChargingFull
+                else when {
+                    batteryPercent <= 12.5 -> Icons.Rounded.Battery0Bar
+                    batteryPercent <= 25 -> Icons.Rounded.Battery1Bar
+                    batteryPercent <= 37.5 -> Icons.Rounded.Battery2Bar
+                    batteryPercent <= 50 -> Icons.Rounded.Battery3Bar
+                    batteryPercent <= 62.5 -> Icons.Rounded.Battery4Bar
+                    batteryPercent <= 75 -> Icons.Rounded.Battery5Bar
+                    batteryPercent <= 87.5 -> Icons.Rounded.Battery6Bar
+                    else -> Icons.Rounded.BatteryFull
+                },
+                contentDescription = stringResource(id = R.string.imformationbar_battery_info_image)
+            )
+            Text(
+                text = "${batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)}% " +
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isCharging)
+                            batteryManager.computeChargeTimeRemaining().let {
+                                if (it == -1L) ""
+                                else "(${
+                                    it
+                                })"
+                            }
+                        else "",
+                style = MaterialTheme.typography.labelLarge
+            )
         }
     }
 }
