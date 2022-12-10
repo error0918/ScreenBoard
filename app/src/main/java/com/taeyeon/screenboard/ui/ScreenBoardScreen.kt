@@ -25,7 +25,6 @@ import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,9 +63,8 @@ fun ScreenBoardScreen() {
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
-        val calendar by viewModel.time.observeAsState(Calendar.getInstance())
         TextClock(
-            calendar = calendar,
+            calendar = viewModel.time,
             modifier = Modifier.align(Alignment.Center)
         )
 
@@ -83,11 +81,11 @@ fun Controller(
     modifier: Modifier = Modifier
 ) {
     AnimatedContent(
-        targetState = viewModel.isTouchProtection.observeAsState(initial = false).value,
+        targetState = viewModel.isTouchProtection,
         transitionSpec = {
-            scaleIn() + slideIn() { fullSize ->
+            scaleIn() + slideIn { fullSize ->
                 IntOffset(0, -fullSize.height)
-            } with scaleOut() + slideOut() { fullSize ->
+            } with scaleOut() + slideOut { fullSize ->
                 IntOffset(0, -fullSize.height)
             }
         },
@@ -295,7 +293,22 @@ fun Controller(
 fun InformationBar(
     modifier: Modifier = Modifier
 ) {
-    val batteryManager = LocalContext.current.getSystemService<BatteryManager>()
+    val context = LocalContext.current
+    LaunchedEffect(true) {
+        val batteryManager = context.getSystemService<BatteryManager>()
+        val isCharging = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { intentFilter ->
+            context.registerReceiver(null, intentFilter)
+        }?.getIntExtra(BatteryManager.EXTRA_STATUS, -1).let { it == BatteryManager.BATTERY_STATUS_CHARGING || it == BatteryManager.BATTERY_STATUS_FULL }
+
+        viewModel.setBatteryInfo(
+            percent = batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: viewModel.batteryInfo.percent,
+            isCharging = isCharging,
+            chargeTimeRemaining =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isCharging) batteryManager?.computeChargeTimeRemaining()
+                else null
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -303,39 +316,14 @@ fun InformationBar(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        batteryManager?.let {
-            val batteryPercent = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            val isCharging = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { intentFilter ->
-                LocalContext.current.registerReceiver(null, intentFilter)
-            }?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) == BatteryManager.BATTERY_STATUS_CHARGING
-
-            Icon(
-                imageVector =
-                if (isCharging) Icons.Rounded.BatteryChargingFull
-                else when {
-                    batteryPercent <= 12.5 -> Icons.Rounded.Battery0Bar
-                    batteryPercent <= 25 -> Icons.Rounded.Battery1Bar
-                    batteryPercent <= 37.5 -> Icons.Rounded.Battery2Bar
-                    batteryPercent <= 50 -> Icons.Rounded.Battery3Bar
-                    batteryPercent <= 62.5 -> Icons.Rounded.Battery4Bar
-                    batteryPercent <= 75 -> Icons.Rounded.Battery5Bar
-                    batteryPercent <= 87.5 -> Icons.Rounded.Battery6Bar
-                    else -> Icons.Rounded.BatteryFull
-                },
-                contentDescription = stringResource(id = R.string.imformationbar_battery_info_image)
-            )
-            Text(
-                text = "${batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)}% " +
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isCharging)
-                            batteryManager.computeChargeTimeRemaining().let {
-                                if (it == -1L) ""
-                                else "(${
-                                    it
-                                })"
-                            }
-                        else "",
-                style = MaterialTheme.typography.labelLarge
-            )
-        }
+        Icon(
+            imageVector = viewModel.batteryInfo.getImageVector(),
+            contentDescription = stringResource(id = R.string.imformationbar_battery_info_image)
+        )
+        Text(
+            text = "${viewModel.batteryInfo.percent}%" +
+                    viewModel.batteryInfo.getChargeTimeRemainingMinutes().let { if (it != null) " (${it}m)" else "" },
+            style = MaterialTheme.typography.labelLarge
+        )
     }
 }

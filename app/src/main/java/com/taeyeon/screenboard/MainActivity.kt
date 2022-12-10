@@ -1,5 +1,7 @@
 package com.taeyeon.screenboard
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -12,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.taeyeon.screenboard.receiver.BatteryReceiver
 import com.taeyeon.screenboard.theme.ScreenBoardTheme
 import com.taeyeon.screenboard.ui.ScreenBoardScreen
+import com.taeyeon.screenboard.ui.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +35,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(Intent.ACTION_POWER_CONNECTED)
+        intentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED)
+        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
+        registerReceiver(BatteryReceiver(viewModel), intentFilter)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

@@ -1,8 +1,10 @@
 package com.taeyeon.screenboard.model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.taeyeon.screenboard.data.BatteryInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -10,22 +12,42 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class MainViewModel: ViewModel() {
-    private var _time = MutableLiveData(Calendar.getInstance())
-    private var _isTouchProtection = MutableLiveData(false)
-
-    val time: LiveData<Calendar> get() = _time
-    val isTouchProtection: LiveData<Boolean> get() = _isTouchProtection
+    var time: Calendar by mutableStateOf(Calendar.getInstance())
+        private set
+    var isTouchProtection by mutableStateOf(false)
+        private set
+    var batteryInfo by mutableStateOf(
+        BatteryInfo(
+            percent = 100,
+            isCharging = false,
+            chargeTimeRemaining = null
+        )
+    )
+        private set
 
     init {
         CoroutineScope(Dispatchers.Main).launch {
-            while (true) {
-                delay(50)
-                _time.value = Calendar.getInstance()
+            for (count in 0..Int.MAX_VALUE) {
+                delay(100)
+                time = Calendar.getInstance()
+                // if (count % 600 == 0) {}
             }
         }
     }
 
     fun changeIsTouchProtection() {
-        _isTouchProtection.value = !_isTouchProtection.value!!
+        isTouchProtection = !isTouchProtection
+    }
+
+    fun setBatteryInfo(
+        percent: Int = batteryInfo.percent,
+        isCharging: Boolean = batteryInfo.isCharging,
+        chargeTimeRemaining: Long? = batteryInfo.chargeTimeRemaining
+    ) {
+        batteryInfo.apply {
+            this.percent = percent
+            this.isCharging = isCharging
+            this.chargeTimeRemaining = chargeTimeRemaining
+        }
     }
 }
