@@ -296,6 +296,35 @@ fun InformationBar(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
+
+        Icon(
+            imageVector = Icons.Rounded.Brightness7,
+            contentDescription = "Brightness"
+        )
+        Slider(
+            value = 0.4f,
+            onValueChange = {},
+            modifier = Modifier.width(96.dp).height(12.dp)
+        )
+
+        Spacer(
+            modifier = Modifier.width(16.dp)
+        )
+
+        Icon(
+            imageVector = Icons.Rounded.VolumeUp,
+            contentDescription = "Volume"
+        )
+        Slider(
+            value = 0.4f,
+            onValueChange = {},
+            modifier = Modifier.width(96.dp).height(12.dp)
+        )
+
+        Spacer(
+            modifier = Modifier.width(16.dp)
+        )
+
         Icon(
             imageVector = viewModel.batteryInfo.getImageVector(),
             contentDescription = stringResource(id = R.string.imformationbar_battery_info_image)
@@ -306,5 +335,6 @@ fun InformationBar(
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.animateContentSize()
         )
+
     }
 }
