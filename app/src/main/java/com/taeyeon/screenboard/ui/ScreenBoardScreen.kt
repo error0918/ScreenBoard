@@ -95,7 +95,7 @@ fun Controller(
                 confirmStateChange = { value ->
                     if (value == 1) {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        viewModel.changeIsTouchProtection()
+                        viewModel.isTouchProtection = !viewModel.isTouchProtection
                     }
                     true
                 }
@@ -247,7 +247,7 @@ fun Controller(
                         IconButton(
                             onClick = {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                                viewModel.changeIsTouchProtection()
+                                viewModel.isTouchProtection = !viewModel.isTouchProtection
                             }
                         ) {
                             Icon(
@@ -289,52 +289,88 @@ fun Controller(
 fun InformationBar(
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(modifier),
-        horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    CompositionLocalProvider(LocalContentColor provides Color.Black.copy(alpha = 0.6f)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp)
+                .then(modifier),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-        Icon(
-            imageVector = Icons.Rounded.Brightness7,
-            contentDescription = "Brightness"
-        )
-        Slider(
-            value = 0.4f,
-            onValueChange = {},
-            modifier = Modifier.width(96.dp).height(12.dp)
-        )
+            IconButton(
+                onClick = { viewModel.isBrightnessBarVisible = !viewModel.isBrightnessBarVisible },
+                enabled = !viewModel.isTouchProtection,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Brightness7,
+                    contentDescription = "Brightness"
+                )
+            }
+            AnimatedVisibility(visible = viewModel.isBrightnessBarVisible && !viewModel.isTouchProtection) {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .width(80.dp)
+                        .height(24.dp)
+                        .background(
+                            color = LocalContentColor.current,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                )
+            }
 
-        Spacer(
-            modifier = Modifier.width(16.dp)
-        )
+            Spacer(modifier = Modifier.width(8.dp))
 
-        Icon(
-            imageVector = Icons.Rounded.VolumeUp,
-            contentDescription = "Volume"
-        )
-        Slider(
-            value = 0.4f,
-            onValueChange = {},
-            modifier = Modifier.width(96.dp).height(12.dp)
-        )
+            IconButton(
+                onClick = { viewModel.isVolumeBarVisible = !viewModel.isVolumeBarVisible },
+                enabled = !viewModel.isTouchProtection,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.VolumeUp,
+                    contentDescription = "Volume"
+                )
+            }
+            AnimatedVisibility(visible = viewModel.isVolumeBarVisible && !viewModel.isTouchProtection) {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .width(80.dp)
+                        .height(24.dp)
+                        .background(
+                            color = LocalContentColor.current,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                )
+            }
 
-        Spacer(
-            modifier = Modifier.width(16.dp)
-        )
+            Spacer(modifier = Modifier.width(8.dp))
 
-        Icon(
-            imageVector = viewModel.batteryInfo.getImageVector(),
-            contentDescription = stringResource(id = R.string.imformationbar_battery_info_image)
-        )
-        Text(
-            text = "${viewModel.batteryInfo.percent}%" +
-                    viewModel.batteryInfo.getChargeTimeRemainingMinutes().let { if (it != null && it != 0L) " (${it}m)" else "" },
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.animateContentSize()
-        )
+            IconButton(
+                onClick = { viewModel.isBatteryVisible = !viewModel.isBatteryVisible },
+                enabled = !viewModel.isTouchProtection,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    imageVector = viewModel.batteryInfo.getImageVector(),
+                    contentDescription = stringResource(id = R.string.imformationbar_battery_info_image)
+                )
+            }
+            AnimatedVisibility(visible = viewModel.isBatteryVisible) {
+                Text(
+                    text = "${viewModel.batteryInfo.percent}%" +
+                            viewModel.batteryInfo.getChargeTimeRemainingMinutes()
+                                .let { if (it != null && it != 0L) " (${it}m)" else "" },
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier
+                        .animateContentSize()
+                        .padding(start = 4.dp)
+                )
+            }
 
+        }
     }
 }

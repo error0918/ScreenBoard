@@ -20,6 +20,8 @@ import com.taeyeon.screenboard.ui.ScreenBoardScreen
 import com.taeyeon.screenboard.ui.viewModel
 
 class MainActivity : ComponentActivity() {
+    val batteryReceiver by lazy { BatteryReceiver(viewModel) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,7 +45,12 @@ class MainActivity : ComponentActivity() {
         intentFilter.addAction(Intent.ACTION_POWER_CONNECTED)
         intentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED)
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
-        registerReceiver(BatteryReceiver(viewModel), intentFilter)
+        registerReceiver(batteryReceiver, intentFilter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(batteryReceiver)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

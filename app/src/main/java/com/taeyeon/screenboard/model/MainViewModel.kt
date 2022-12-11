@@ -14,8 +14,12 @@ import java.util.*
 class MainViewModel: ViewModel() {
     var time: Calendar by mutableStateOf(Calendar.getInstance())
         private set
+
     var isTouchProtection by mutableStateOf(false)
-        private set
+
+    var isBrightnessBarVisible by mutableStateOf(false)
+    var isVolumeBarVisible by mutableStateOf(false)
+    var isBatteryVisible by mutableStateOf(false)
     var batteryInfo by mutableStateOf(
         BatteryInfo(
             percent = 100,
@@ -24,6 +28,7 @@ class MainViewModel: ViewModel() {
         )
     )
         private set
+
 
     init {
         CoroutineScope(Dispatchers.Main).launch {
@@ -35,9 +40,6 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    fun changeIsTouchProtection() {
-        isTouchProtection = !isTouchProtection
-    }
 
     fun setBatteryInfo(
         percent: Int = batteryInfo.percent,
@@ -50,4 +52,5 @@ class MainViewModel: ViewModel() {
             chargeTimeRemaining = chargeTimeRemaining
         )
     }
+
 }
