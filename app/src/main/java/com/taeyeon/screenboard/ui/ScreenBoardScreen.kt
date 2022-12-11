@@ -1,15 +1,12 @@
 @file:OptIn(
     ExperimentalAnimationApi::class,
-    ExperimentalMaterialApi::class, ExperimentalFoundationApi::class
+    ExperimentalMaterialApi::class,
+    ExperimentalFoundationApi::class
 )
 @file:Suppress("OPT_IN_IS_NOT_ENABLED")
 
 package com.taeyeon.screenboard.ui
 
-import android.content.Intent
-import android.content.IntentFilter
-import android.os.BatteryManager
-import android.os.Build
 import androidx.compose.animation.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -36,7 +33,6 @@ import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.content.getSystemService
 import com.taeyeon.screenboard.R
 import com.taeyeon.screenboard.model.MainViewModel
 import java.util.*
@@ -293,22 +289,6 @@ fun Controller(
 fun InformationBar(
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    LaunchedEffect(true) {
-        val batteryManager = context.getSystemService<BatteryManager>()
-        val isCharging = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { intentFilter ->
-            context.registerReceiver(null, intentFilter)
-        }?.getIntExtra(BatteryManager.EXTRA_STATUS, -1).let { it == BatteryManager.BATTERY_STATUS_CHARGING || it == BatteryManager.BATTERY_STATUS_FULL }
-
-        viewModel.setBatteryInfo(
-            percent = batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: viewModel.batteryInfo.percent,
-            isCharging = isCharging,
-            chargeTimeRemaining =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && isCharging) batteryManager?.computeChargeTimeRemaining()
-                else null
-        )
-    }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -322,8 +302,9 @@ fun InformationBar(
         )
         Text(
             text = "${viewModel.batteryInfo.percent}%" +
-                    viewModel.batteryInfo.getChargeTimeRemainingMinutes().let { if (it != null) " (${it}m)" else "" },
-            style = MaterialTheme.typography.labelLarge
+                    viewModel.batteryInfo.getChargeTimeRemainingMinutes().let { if (it != null && it != 0L) " (${it}m)" else "" },
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.animateContentSize()
         )
     }
 }

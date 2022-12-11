@@ -44,10 +44,10 @@ class MainViewModel: ViewModel() {
         isCharging: Boolean = batteryInfo.isCharging,
         chargeTimeRemaining: Long? = batteryInfo.chargeTimeRemaining
     ) {
-        batteryInfo.apply {
-            this.percent = percent
-            this.isCharging = isCharging
-            this.chargeTimeRemaining = chargeTimeRemaining
-        }
+        batteryInfo = batteryInfo.copy(
+            percent = percent,
+            isCharging = isCharging,
+            chargeTimeRemaining = chargeTimeRemaining
+        )
     }
 }
