@@ -2,17 +2,20 @@
     <string name="app_name">Screen Board</string>
 
 
-    <string name="floatingbutton_move_left">Move Left</string>
-    <string name="floatingbutton_move_right">Move Right</string>
+    <string name="control_bar_floatingbutton_move_left">Move Left</string>
+    <string name="control_bar_floatingbutton_move_right">Move Right</string>
 
-    <string name="floatingbutton_morevert">More</string>
-    <string name="floatingbutton_touch_protection">Touch Protection</string>
-    <string name="floatingbutton_poweroff">Power Off</string>
-    <string name="floatingbutton_close">Close</string>
+    <string name="control_bar_floatingbutton_morevert">More</string>
+    <string name="control_bar_floatingbutton_touch_protection">Touch Protection</string>
+    <string name="control_bar_floatingbutton_poweroff">Power Off</string>
+    <string name="control_bar_floatingbutton_close">Close</string>
 
     <string name="clear_touch_protection_arrow">Clear Touch Protection Arrow</string>
     <string name="clear_touch_protection">Clear Touch Protection</string>
 
 
-    <string name="imformationbar_battery_info_image">Battery Info</string>
+    <string name="information_bar_notifications">Notifications</string>
+    <string name="information_bar_brightness">Brightness</string>
+    <string name="information_bar_volume">Volume</string>
+    <string name="information_bar_battery_info_image">Battery Info</string>
 </resources>

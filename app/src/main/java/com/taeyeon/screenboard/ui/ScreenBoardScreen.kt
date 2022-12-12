@@ -12,7 +12,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -23,16 +22,14 @@ import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -52,13 +49,13 @@ fun ScreenBoardScreen() {
             .padding(16.dp),
         gradientBoxColor = GradientBoxColor(
             backgroundColor = Color.White,
-            layer1Color1 = Color.Red,
-            layer1Color2 = Color.Magenta,
-            layer2Color1 = Color.Yellow,
-            layer2Color2 = Color(0xffffc0cb)
+            layer1Color1 = Color.Yellow,
+            layer1Color2 = Color.White,
+            layer2Color1 = Color.Cyan,
+            layer2Color2 = Color.Green
         )
     ) {
-        Controller(
+        ControlBar(
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
@@ -68,7 +65,9 @@ fun ScreenBoardScreen() {
         )
 
         InformationBar(
-            modifier = Modifier.align(Alignment.BottomCenter)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .alpha(0.6f)
         )
 
     }
@@ -76,7 +75,7 @@ fun ScreenBoardScreen() {
 
 
 @Composable
-fun Controller(
+fun ControlBar(
     modifier: Modifier = Modifier
 ) {
     AnimatedContent(
@@ -208,7 +207,7 @@ fun Controller(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.ChevronLeft,
-                                contentDescription = stringResource(id = R.string.floatingbutton_move_left)
+                                contentDescription = stringResource(id = R.string.control_bar_floatingbutton_move_left)
                             )
                         }
                         IconButton(
@@ -219,7 +218,7 @@ fun Controller(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.ChevronRight,
-                                contentDescription = stringResource(id = R.string.floatingbutton_move_right)
+                                contentDescription = stringResource(id = R.string.control_bar_floatingbutton_move_right)
                             )
                         }
                     }
@@ -244,7 +243,7 @@ fun Controller(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.MoreVert,
-                                contentDescription = stringResource(id = R.string.floatingbutton_morevert)
+                                contentDescription = stringResource(id = R.string.control_bar_floatingbutton_morevert)
                             )
                         }
                         IconButton(
@@ -255,7 +254,7 @@ fun Controller(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.DoNotTouch,
-                                contentDescription = stringResource(id = R.string.floatingbutton_touch_protection)
+                                contentDescription = stringResource(id = R.string.control_bar_floatingbutton_touch_protection)
                             )
                         }
                         IconButton(
@@ -266,7 +265,7 @@ fun Controller(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.PowerOff,
-                                contentDescription = stringResource(id = R.string.floatingbutton_poweroff)
+                                contentDescription = stringResource(id = R.string.control_bar_floatingbutton_poweroff)
                             )
                         }
                         IconButton(
@@ -277,7 +276,7 @@ fun Controller(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Close,
-                                contentDescription = stringResource(id = R.string.floatingbutton_close)
+                                contentDescription = stringResource(id = R.string.control_bar_floatingbutton_close)
                             )
                         }
                     }
@@ -292,15 +291,29 @@ fun Controller(
 fun InformationBar(
     modifier: Modifier = Modifier
 ) {
-    CompositionLocalProvider(LocalContentColor provides Color.Black.copy(alpha = 0.6f)) {
+    CompositionLocalProvider(LocalContentColor provides Color.Black) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(IntrinsicSize.Min)
                 .padding(horizontal = 4.dp)
                 .then(modifier),
-            horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                IconButton(
+                    onClick = { /* TODO */ },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Notifications,
+                        contentDescription = stringResource(id = R.string.information_bar_notifications)
+                    )
+                }
+            }
 
             IconButton(
                 onClick = { viewModel.isBrightnessBarVisible = !viewModel.isBrightnessBarVisible },
@@ -309,18 +322,18 @@ fun InformationBar(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Brightness7,
-                    contentDescription = "Brightness"
+                    contentDescription = stringResource(id = R.string.information_bar_brightness)
                 )
             }
             AnimatedVisibility(visible = viewModel.isBrightnessBarVisible && !viewModel.isTouchProtection) {
-                var value0 by remember { mutableStateOf(0.5f) }
+                var value by remember { mutableStateOf(0.5f) }
                 BoxSlider(
                     modifier = Modifier
                         .padding(start = 4.dp)
                         .width(80.dp)
                         .height(24.dp),
-                    value = value0,
-                    onValueChanged = { value0 = it }
+                    value = value,
+                    onValueChange = { value = it }
                 )
             }
 
@@ -333,19 +346,18 @@ fun InformationBar(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.VolumeUp,
-                    contentDescription = "Volume"
+                    contentDescription = stringResource(id = R.string.information_bar_volume)
                 )
             }
             AnimatedVisibility(visible = viewModel.isVolumeBarVisible && !viewModel.isTouchProtection) {
-                Box(
+                var value by remember { mutableStateOf(0.5f) }
+                BoxSlider(
                     modifier = Modifier
                         .padding(start = 4.dp)
                         .width(80.dp)
-                        .height(24.dp)
-                        .background(
-                            color = LocalContentColor.current,
-                            shape = MaterialTheme.shapes.medium
-                        )
+                        .height(24.dp),
+                    value = value,
+                    onValueChange = { value = it }
                 )
             }
 
@@ -358,7 +370,7 @@ fun InformationBar(
             ) {
                 Icon(
                     imageVector = viewModel.batteryInfo.getImageVector(),
-                    contentDescription = stringResource(id = R.string.imformationbar_battery_info_image)
+                    contentDescription = stringResource(id = R.string.information_bar_battery_info_image)
                 )
             }
             AnimatedVisibility(visible = viewModel.isBatteryVisible) {

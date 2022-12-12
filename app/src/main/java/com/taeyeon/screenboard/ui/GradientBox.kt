@@ -67,7 +67,7 @@ fun GradientBox(
                         y = boxSize.height / 2 - biggerSection * yFraction / 2
                     )
                 ),
-                alpha = 0.5f
+                alpha = 0.75f
             )
             .background(
                 brush = Brush.linearGradient(
@@ -84,7 +84,7 @@ fun GradientBox(
                         y = boxSize.height / 2 + biggerSection * yFraction / 2
                     )
                 ),
-                alpha = 0.3f
+                alpha = 0.5f
             )
             .then(modifier),
         contentAlignment = contentAlignment,

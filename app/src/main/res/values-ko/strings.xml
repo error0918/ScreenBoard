@@ -3,17 +3,20 @@
     <string name="app_name">스크린 보드</string>
 
 
-    <string name="floatingbutton_move_left">왼쪽으로</string>
-    <string name="floatingbutton_move_right">오른쪽으로</string>
+    <string name="control_bar_floatingbutton_move_left">왼쪽으로</string>
+    <string name="control_bar_floatingbutton_move_right">오른쪽으로</string>
 
-    <string name="floatingbutton_morevert">더보기</string>
-    <string name="floatingbutton_touch_protection">터치 방지</string>
-    <string name="floatingbutton_poweroff">전원 끄기</string>
-    <string name="floatingbutton_close">닫기</string>
+    <string name="control_bar_floatingbutton_morevert">더보기</string>
+    <string name="control_bar_floatingbutton_touch_protection">터치 방지</string>
+    <string name="control_bar_floatingbutton_poweroff">전원 끄기</string>
+    <string name="control_bar_floatingbutton_close">닫기</string>
 
     <string name="clear_touch_protection_arrow">터치 방지 해제 화살표</string>
     <string name="clear_touch_protection">터치 방지 해제</string>
 
 
-    <string name="imformationbar_battery_info_image">배터리 정보</string>
+    <string name="information_bar_notifications">알림</string>
+    <string name="information_bar_brightness">밝기</string>
+    <string name="information_bar_volume">음량</string>
+    <string name="information_bar_battery_info_image">배터리 정보</string>
 </resources>
