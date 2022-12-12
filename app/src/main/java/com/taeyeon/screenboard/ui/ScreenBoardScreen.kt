@@ -12,6 +12,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -22,6 +23,7 @@ import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,13 +31,14 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.taeyeon.screenboard.R
 import com.taeyeon.screenboard.model.MainViewModel
-import java.util.*
 import kotlin.system.exitProcess
 
 
@@ -310,15 +313,14 @@ fun InformationBar(
                 )
             }
             AnimatedVisibility(visible = viewModel.isBrightnessBarVisible && !viewModel.isTouchProtection) {
-                Box(
+                var value0 by remember { mutableStateOf(0.5f) }
+                BoxSlider(
                     modifier = Modifier
                         .padding(start = 4.dp)
                         .width(80.dp)
-                        .height(24.dp)
-                        .background(
-                            color = LocalContentColor.current,
-                            shape = MaterialTheme.shapes.medium
-                        )
+                        .height(24.dp),
+                    value = value0,
+                    onValueChanged = { value0 = it }
                 )
             }
 
