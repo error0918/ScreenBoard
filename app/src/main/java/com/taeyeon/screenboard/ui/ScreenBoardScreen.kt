@@ -302,7 +302,9 @@ fun InformationBar(
         ) {
 
             Box(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .widthIn(min = 32.dp + 8.dp)
             ) {
                 IconButton(
                     onClick = { /* TODO */ },
