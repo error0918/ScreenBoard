@@ -17,7 +17,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 
 data class GradientBoxColor(
-    val backgroundColor: Color = Color.White,
+    val backgroundColor: Color = Color.Black,
     val layer1Color1: Color,
     val layer1Color2: Color = layer1Color1.copy(alpha = 0.5f).compositeOver(backgroundColor),
     val layer2Color1: Color,

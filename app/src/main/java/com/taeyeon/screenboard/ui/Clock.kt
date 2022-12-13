@@ -16,7 +16,7 @@ fun TextClock(
     Text(
         text = "${getDigitNumber(calendar.get(Calendar.HOUR_OF_DAY), 2)}:${getDigitNumber(calendar.get(Calendar.MINUTE), 2)}:${getDigitNumber(calendar.get(Calendar.SECOND), 2)}.${calendar.get(Calendar.MILLISECOND) / 100}",
         style = clock,
-        color = Color.Black,
+        color = Color.White,
         modifier = modifier
     )
 }

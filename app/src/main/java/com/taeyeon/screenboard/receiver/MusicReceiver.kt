@@ -9,12 +9,12 @@ import android.media.AudioManager
 import android.util.Log
 import androidx.core.content.getSystemService
 import com.taeyeon.screenboard.data.MusicInfo
-import com.taeyeon.screenboard.model.MainViewModel
 
-class MusicReceiver(mainViewModel: MainViewModel) : BroadcastReceiver() {
+class MusicReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.e("asdf", "asdf")
         if (context != null && intent != null) {
+android.widget.Toast.makeText(context, "asdf", android.widget.Toast.LENGTH_SHORT).show()
             intent.extras?.let { extras ->
                 val title = "extras.getString"
 

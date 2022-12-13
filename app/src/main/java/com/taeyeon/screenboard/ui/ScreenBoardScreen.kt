@@ -48,11 +48,11 @@ fun ScreenBoardScreen() {
             .fillMaxSize()
             .padding(16.dp),
         gradientBoxColor = GradientBoxColor(
-            backgroundColor = Color.White,
-            layer1Color1 = Color.Yellow,
-            layer1Color2 = Color.White,
-            layer2Color1 = Color.Cyan,
-            layer2Color2 = Color.Green
+            backgroundColor = Color.Black,
+            layer1Color1 = Color.Blue,
+            layer1Color2 = Color.Red,
+            layer2Color1 = Color(0xFFE66A0B),
+            layer2Color2 = Color(0xFFFF00E4)
         )
     ) {
         ControlBar(
@@ -291,7 +291,7 @@ fun ControlBar(
 fun InformationBar(
     modifier: Modifier = Modifier
 ) {
-    CompositionLocalProvider(LocalContentColor provides Color.Black) {
+    CompositionLocalProvider(LocalContentColor provides Color.White) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

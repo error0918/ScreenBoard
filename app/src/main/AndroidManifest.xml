@@ -24,6 +24,18 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <receiver
+            android:name=".receiver.MusicReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.music.metachanged"/>
+                <action android:name="com.android.music.playstatechanged"/>
+                <action android:name="com.android.music.playbackcomplete"/>
+                <action android:name="com.android.music.queuechanged"/>
+                <action android:name="com.android.music.asyncopencomplete"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -22,7 +22,7 @@ import com.taeyeon.screenboard.ui.viewModel
 
 class MainActivity : ComponentActivity() {
     private val batteryReceiver by lazy { BatteryReceiver(viewModel) }
-    private val musicReceiver by lazy { MusicReceiver(viewModel) }
+    private val musicReceiver by lazy { MusicReceiver() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,13 +51,26 @@ class MainActivity : ComponentActivity() {
                 addAction(Intent.ACTION_BATTERY_CHANGED)
             }
         )
-        registerReceiver(
+        /*registerReceiver(
             musicReceiver,
             IntentFilter().apply {
                 addAction("com.android.music.metachanged")
                 addAction("com.android.music.playstatechanged")
                 addAction("com.android.music.playbackcomplete")
                 addAction("com.android.music.queuechanged")
+                addAction("com.android.music.asyncopencomplete")
+
+                addAction("com.android.music.musicservicecommand")
+
+                addAction("com.android.music.musicservicecommand.togglepause")
+                addAction("com.android.music.musicservicecommand.pause")
+                addAction("com.android.music.musicservicecommand.previous")
+                addAction("com.android.music.musicservicecommand.next")
+
+                addAction("com.android.music.musicservicecommand.next")
+
+                addAction(Intent.ACTION_MEDIA_BUTTON)
+                //addAction(Intent.ACT)
 
                 addAction("com.apple.music.playbackstatechange")
                 addAction("com.apple.music.metadatachanged")
@@ -67,13 +80,13 @@ class MainActivity : ComponentActivity() {
                 addAction("com.spotify.music.metadatachanged")
                 addAction("com.spotify.music.queuechanged")
             }
-        )
+        )*/
     }
 
     override fun onPause() {
         super.onPause()
         unregisterReceiver(batteryReceiver)
-        unregisterReceiver(musicReceiver)
+        //unregisterReceiver(musicReceiver)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
