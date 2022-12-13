@@ -15,12 +15,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.taeyeon.screenboard.receiver.BatteryReceiver
+import com.taeyeon.screenboard.receiver.MusicReceiver
 import com.taeyeon.screenboard.theme.ScreenBoardTheme
 import com.taeyeon.screenboard.ui.ScreenBoardScreen
 import com.taeyeon.screenboard.ui.viewModel
 
 class MainActivity : ComponentActivity() {
-    val batteryReceiver by lazy { BatteryReceiver(viewModel) }
+    private val batteryReceiver by lazy { BatteryReceiver(viewModel) }
+    private val musicReceiver by lazy { MusicReceiver(viewModel) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,16 +43,37 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(Intent.ACTION_POWER_CONNECTED)
-        intentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED)
-        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
-        registerReceiver(batteryReceiver, intentFilter)
+        registerReceiver(
+            batteryReceiver,
+            IntentFilter().apply {
+                addAction(Intent.ACTION_POWER_CONNECTED)
+                addAction(Intent.ACTION_POWER_DISCONNECTED)
+                addAction(Intent.ACTION_BATTERY_CHANGED)
+            }
+        )
+        registerReceiver(
+            musicReceiver,
+            IntentFilter().apply {
+                addAction("com.android.music.metachanged")
+                addAction("com.android.music.playstatechanged")
+                addAction("com.android.music.playbackcomplete")
+                addAction("com.android.music.queuechanged")
+
+                addAction("com.apple.music.playbackstatechange")
+                addAction("com.apple.music.metadatachanged")
+                addAction("com.apple.music.queuechanged")
+
+                addAction("com.spotify.music.playbackstatechanged")
+                addAction("com.spotify.music.metadatachanged")
+                addAction("com.spotify.music.queuechanged")
+            }
+        )
     }
 
     override fun onPause() {
         super.onPause()
         unregisterReceiver(batteryReceiver)
+        unregisterReceiver(musicReceiver)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

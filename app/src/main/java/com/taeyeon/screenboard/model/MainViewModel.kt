@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.taeyeon.screenboard.data.BatteryInfo
+import com.taeyeon.screenboard.data.MusicInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -26,6 +27,11 @@ class MainViewModel: ViewModel() {
             isCharging = false,
             chargeTimeRemaining = null
         )
+    )
+        private set
+    var musicInfo by mutableStateOf(
+        //MusicInfo()
+    null
     )
         private set
 

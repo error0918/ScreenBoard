@@ -5,9 +5,9 @@ import androidx.compose.material.icons.rounded.*
 import java.util.concurrent.TimeUnit
 
 data class BatteryInfo(
-    var percent: Int,
-    var isCharging: Boolean = false,
-    var chargeTimeRemaining: Long? = null
+    val percent: Int,
+    val isCharging: Boolean = false,
+    val chargeTimeRemaining: Long? = null
 ) {
     fun getImageVector() =
         if (isCharging) Icons.Rounded.BatteryChargingFull
